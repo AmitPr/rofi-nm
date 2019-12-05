@@ -67,12 +67,16 @@ if __name__ == "__main__":
         quit()
     output = out.decode("utf-8")
     id = int(output[29:len(output)-2])
-    print(networks[id].protocols)
-    '''if len(networks[id].protocols)==0:
+    password = ""
+    #If there are protocols detected, get a password from the user.
+    if len(networks[id].protocols)>0:
         rofi_pass = subprocess.Popen(["rofi","-dmenu","-p","Password","-location","3","-width","23","-lines","0"],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
         out,err=rofi_pass.communicate()
-        connect = subprocess.Popen(["nmcli","device","wifi","connect",ssid,"password",out.decode("utf-8")])
-        connect.communicate()
+        password=out.decode('utf-8')
+    #Conenct to network using nmcli
+    if password != "":
+        connect = subprocess.Popen(["nmcli","device","wifi","connect",networks[id].ssid,"password",password])
+        out,_=connect.communicate()
     else:
-        connect = subprocess.Popen(["nmcli","device","wifi","connect",ssid])
-        connect.communicate()'''
+        connect = subprocess.Popen(["nmcli","device","wifi","connect",networks[id].ssid])
+        out,_=connect.communicate()
